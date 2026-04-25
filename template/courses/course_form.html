@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if form.instance.pk %}Update Course{% else %}Create New Course{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>{% if form.instance.pk %}
+                    Update Course
+                {% else %}
+                    Create New Course
+                {% endif %}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-primary mt-3">
+                    {% if form.instance.pk %}Update{% else %}Create{% endif %}
+                </button>
+                <a href="{% url 'course_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

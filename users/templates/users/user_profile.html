@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ viewed_user.username }}'s Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 text-center">
+                    <img src="{{ viewed_user.profile.profile_picture.url }}" 
+                         class="rounded-circle mb-3" 
+                         width="150" height="150"
+                         alt="{{ viewed_user.username }}'s profile picture">
+                    <h4>{{ viewed_user.username }}</h4>
+                    <p class="text-muted">
+                        {% if viewed_user.is_teacher %}
+                            <span class="badge bg-info">Teacher</span>
+                        {% else %}
+                            <span class="badge bg-success">Student</span>
+                        {% endif %}
+                    </p>
+                    <p class="text-muted">{{ viewed_user.profile.status }}</p>
+                </div>
+                <div class="col-md-9">
+                    <h5>About</h5>
+                    <p>{{ viewed_user.profile.bio|default:"No bio provided" }}</p>
+                    <hr>
+                    <h5>Contact Information</h5>
+                    <p><strong>Email:</strong> {{ viewed_user.email }}</p>
+                    {% if viewed_user.is_teacher %}
+                        <a href="{% url 'chat_room' 'teacher-chat' %}" class="btn btn-primary">Send Message</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

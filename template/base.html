@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eLearning Platform - {% block title %}{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'course_list' %}">eLearning</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'course_list' %}">Courses</a>
+                    </li>
+                    {% if user.is_authenticated and user.is_teacher%}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'course_create' %}">Create Course</a>
+                    </li>
+                    {% endif %}
+                    {% if user.is_authenticated%}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'user_search' %}">Search Users</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <form method="post" action="{% url 'logout' %}" class="d-inline">
+                            {% csrf_token %}
+                        <button type="submit" class="nav-link btn btn-link" style="display: inline; padding: 0.5rem 1rem;">Logout</button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container text-center">
+            <p>&copy; Xu Zihan eLearning Platform</p>
+        </div>
+    </footer>
+
+    <!-- Load JavaScript libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block scripts %}{% endblock %}
+    
+    <!-- Vue app should be loaded after Vue library -->
+    <script src="{% static 'js/vue-app.js' %}"></script>
+</body>
+</html>
