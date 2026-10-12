@@ -1,0 +1,221 @@
+{% extends 'base.html' %} 
+{% block title %}Courses{% endblock %} 
+
+{% block content %}
+<h1 class="mb-4">Available Courses</h1>
+
+<!-- Vue.js App Container -->
+<div id="vue-app">
+  <!-- Notifications Section for Teachers -->
+  {% if user.is_authenticated and user.is_teacher %}
+  <div class="card mb-4">
+    <div class="card-header text-primary">
+      <h5 class="mb-0">Recent Notifications</h5>
+    </div>
+    <div class="card-body">
+      <div class="list-group border border-success">
+        {% for notification in notifications %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div class="flex-grow-1">
+            <p class="mb-1">{{ notification.message }}</p>
+            <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
+          </div>
+          <form method="post" action="{% url 'delete_notification' notification.id %}" class="ms-2">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete notification">
+              &times;
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  
+  <!-- notifications for students -->
+  {% if user.is_authenticated and user.is_student%}
+  <div class="card mb-4">
+    <div class="card-header text-primary">
+      <h5 class="mb-0">Recent Notifications</h5>
+    </div>
+    <div class="card-body">
+      <div class="list-group border border-success">
+        {% for notification in module_notifications %}
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+          <div class="flex-grow-1">
+            <p class="mb-1">{{ notification.message }}</p>
+            <small class="text-muted">{{ notification.created_at|timesince }} ago</small>
+          </div>
+          <form method="post" action="{% url 'delete_module_notification' notification.id %}" class="ms-2">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete notification">
+              &times;
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="row">
+    {% for course in courses %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 text-center">
+        {% if course.course_picture %}
+        <img src="{{ course.course_picture.url }}" style="width: 150px; height: 150px; object-fit: cover" alt="{{ course.title }}" class="rounded mx-auto d-block" />
+        {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ course.title }}</h5>
+          <p class="card-text">{{ course.overview|truncatewords:20 }}</p>
+          
+          <!-- Enhanced Like Button -->
+          <div class="d-flex justify-content-center align-items-center">
+            <button 
+              @click="toggleLike('{{ course.id }}')" 
+              :class="{
+                'btn-danger': isLiked('{{ course.id }}'), 
+                'btn-outline-danger': !isLiked('{{ course.id }}'),
+                'loading': loadingStates['{{ course.id }}']
+              }" 
+              class="btn btn-sm me-2 like-button"
+              :disabled="loadingStates['{{ course.id }}']"
+              data-course-id="{{ course.id }}"
+              data-initial-count="{{ course.likes.count }}">
+              <span v-if="!loadingStates['{{ course.id }}']">
+                <i class="fas" :class="isLiked('{{ course.id }}')"></i> 
+                Like
+              </span>
+              <span v-else>
+                <i class="fas fa-spinner fa-spin"></i>
+              </span>
+            </button>
+            
+            <span class="badge bg-secondary">[[ likeCounts['{{ course.id }}'] || 0 ]]</span>
+          </div>
+          
+          <div class="mt-3">
+            <a href="{% url 'course_detail' course.slug %}" class="btn btn-primary">View Details</a>
+          </div>
+        </div>
+        <div class="card-footer">
+          <small class="text-muted">Teacher: {{ course.teacher.username }}</small>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <p>No courses available yet.</p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.like-button {
+    transition: all 0.3s ease;
+}
+
+.badge {
+    font-size: 0.9rem;
+    min-width: 2rem;
+}
+</style>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const { createApp, ref } = Vue;
+
+createApp({
+    delimiters: ['[[', ']]'],
+    setup() {
+        const likeCounts = ref({});
+        const userLikes = ref(new Set());
+        const loadingStates = ref({});
+        
+        // Initialize like counts from server data
+        function initializeLikeData() {
+            // Initialize like counts from data attributes
+            const likeButtons = document.querySelectorAll('.like-button');
+            likeButtons.forEach(button => {
+                const courseId = button.getAttribute('data-course-id');
+                const initialCount = parseInt(button.getAttribute('data-initial-count') || 0);
+                likeCounts.value[courseId] = initialCount;
+                loadingStates.value[courseId] = false;
+            });
+            
+            // Initialize user likes from Django context
+            const initialLikes = JSON.parse('{{ user_likes|safe }}' || '[]');
+            initialLikes.forEach(courseId => {
+                userLikes.value.add(courseId.toString());
+            });
+        }
+        
+        // API call to toggle like
+        async function toggleLike(courseId) {
+            // Set loading state
+            loadingStates.value[courseId] = true;
+            
+            try {
+                const response = await fetch(`/api/courses/${courseId}/like/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    credentials: 'same-origin'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                
+                // Update UI based on response
+                if (data.liked) {
+                    userLikes.value.add(courseId);
+                } else {
+                    userLikes.value.delete(courseId);
+                }
+                
+                likeCounts.value[courseId] = data.like_count;
+                
+                console.log('Course', courseId, `${data.liked ? 'liked' : 'unliked'}. Count:`, data.like_count);
+            } catch (error) {
+                console.error('Error toggling like:', error);
+                alert('Failed to update like. Please try again.');
+            } finally {
+                loadingStates.value[courseId] = false;
+            }
+        }
+        
+        function isLiked(courseId) {
+            return userLikes.value.has(courseId.toString());
+        }
+        
+        // Initialize on mount
+        setTimeout(initializeLikeData, 100);
+        
+        return {
+            likeCounts,
+            loadingStates,
+            toggleLike,
+            isLiked
+        };
+    }
+}).mount('#vue-app');
+</script>
+{% endblock %}

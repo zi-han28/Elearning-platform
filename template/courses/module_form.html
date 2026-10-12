@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if form.instance.pk %}Update Module{% else %}Add Module{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>
+                <i class="fas fa-book"></i>
+                {% if form.instance.pk %}
+                    Update Module "{{ form.instance.title }}"
+                {% else %}
+                    Add Module to "{{ course.title }}"
+                {% endif %}
+            </h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form|crispy }}
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        {% if form.instance.pk %}Update Module{% else %}Add Module{% endif %}
+                    </button>
+                    <a href="{% if course %}{% url 'course_detail' course.slug %}{% else %}{% url 'course_detail' form.instance.course.slug %}{% endif %}" 
+                       class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
