@@ -91,7 +91,7 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     } 
 }
-DATABASES["default"]= dj_database_url.parse("postgresql://e_learningdatabase_9ejw_user:12ZfcAjrbPP6HmKZiwaOQZfEAAMPoVGI@dpg-db67g0942hec73b70di0-a/e_learningdatabase_9ejw")
+DATABASES["default"]= dj_database_url.parse("postgresql://e_learningdatabase_9ejw_user:12ZfcAjrbPP6HmKZiwaOQZfEAAMPoVGI@dpg-db67g0942hec73b70di0-a.singapore-postgres.render.com/e_learningdatabase_9ejw")
 
 # postgresql://e_learningdatabase_9ejw_user:12ZfcAjrbPP6HmKZiwaOQZfEAAMPoVGI@dpg-db67g0942hec73b70di0-a/e_learningdatabase_9ejw 
 
