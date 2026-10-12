@@ -1,0 +1,521 @@
+# Workspace Structure
+
+Files listed in .gitignore will be excluded.
+
+## Configuration Files
+
+## File Structure
+
+- 📄 .gitignore
+- 📁 Backend/
+  - 📁 Backend/
+    - 📄 __init__.py
+    - 📄 asgi.py
+      - Imports:
+        - import os
+        - import django.core.asgi.get_asgi_application
+        - import channels.routing.ProtocolTypeRouter
+        - import channels.routing.URLRouter
+        - import channels.auth.AuthMiddlewareStack
+        - import channels.security.websocket.AllowedHostsOriginValidator
+        - import chat.routing
+    - 📄 celery.py
+      - Imports:
+        - import os
+        - import celery.Celery
+    - 📄 settings.py
+      - Imports:
+        - import os
+        - import pathlib.Path
+        - import datetime.timedelta
+        - import dotenv.load_dotenv
+        - import os
+    - 📄 urls.py
+      - Imports:
+        - import django.contrib.admin
+        - import django.shortcuts.redirect
+        - import django.urls.path
+        - import django.urls.include
+        - import django.conf.settings
+        - import django.conf.urls.static.static
+        - import users.views as user_views
+        - import users.views.CreateUserView
+        - import rest_framework_simplejwt.views.TokenObtainPairView
+        - import rest_framework_simplejwt.views.TokenRefreshView
+    - 📄 wsgi.py
+      - Imports:
+        - import os
+        - import django.core.wsgi.get_wsgi_application
+  - 📁 chat/
+    - 📄 __init__.py
+    - 📄 admin.py
+    - 📄 apps.py
+      - Imports:
+        - import django.apps.AppConfig
+      - Classes:
+        - ChatConfig
+    - 📄 consumers.py
+      - Imports:
+        - import json
+        - import channels.generic.websocket.AsyncWebsocketConsumer
+        - import django.contrib.auth.models.AnonymousUser
+        - import .models.ChatMessage
+        - import django.utils.timezone
+        - import courses.models.Course
+      - Classes:
+        - ChatConsumer
+    - 📁 migrations/
+      - 📄 0001_initial.py
+        - Imports:
+          - import django.db.migrations
+          - import django.db.models
+        - Classes:
+          - Migration
+      - 📄 0002_initial.py
+        - Imports:
+          - import django.db.models.deletion
+          - import django.db.migrations
+          - import django.db.models
+        - Classes:
+          - Migration
+      - 📄 0003_initial.py
+        - Imports:
+          - import django.db.models.deletion
+          - import django.conf.settings
+          - import django.db.migrations
+          - import django.db.models
+        - Classes:
+          - Migration
+      - 📄 __init__.py
+    - 📄 models.py
+      - Imports:
+        - import django.db.models
+        - import django.db.models
+        - import courses.models.Course
+        - import users.models.CustomUser
+      - Classes:
+        - ChatMessage
+      - Methods:
+        - __str__
+    - 📄 routing.py
+      - Imports:
+        - import django.urls.re_path
+        - import ..consumers
+    - 📁 templates/
+      - 📁 chat/
+        - 📄 room.html
+    - 📄 tests.py
+      - Imports:
+        - import django.test.TestCase
+        - import django.test.Client
+        - import django.urls.reverse
+        - import django.contrib.auth.get_user_model
+        - import courses.models.Course
+        - import .models.ChatMessage
+        - import django.utils.timezone
+      - Classes:
+        - ChatAppTests
+      - Methods:
+        - setUp
+        - test_chat_room_view_authenticated
+        - test_chat_message_creation
+        - test_chat_message_ordering
+        - test_chat_message_str_representation
+        - test_chat_room_context_data
+    - 📄 urls.py
+      - Imports:
+        - import django.urls.path
+        - import ..views
+    - 📄 views.py
+      - Imports:
+        - import django.shortcuts.render
+        - import django.shortcuts.get_object_or_404
+        - import courses.models.Course
+        - import django.contrib.auth.decorators.login_required
+        - import .models.ChatMessage
+      - Functions:
+        - chat_room
+  - 📁 courses/
+    - 📄 __init__.py
+    - 📄 admin.py
+      - Imports:
+        - import django.contrib.admin
+    - 📄 apps.py
+      - Imports:
+        - import django.apps.AppConfig
+      - Classes:
+        - CoursesConfig
+    - 📄 forms.py
+      - Imports:
+        - import django.forms
+        - import .models.Course
+        - import .models.Module
+        - import .models.Feedback
+      - Classes:
+        - CourseForm
+        - ModuleForm
+        - FeedbackForm
+      - Methods:
+        - __init__
+    - 📁 migrations/
+      - 📄 0001_initial.py
+        - Imports:
+          - import django.db.migrations
+          - import django.db.models
+        - Classes:
+          - Migration
+      - 📄 0002_initial.py
+        - Imports:
+          - import django.db.models.deletion
+          - import django.conf.settings
+          - import django.db.migrations
+          - import django.db.models
+        - Classes:
+          - Migration
+      - 📄 __init__.py
+    - 📄 models.py
+      - Imports:
+        - import email.message
+        - import django.db.models
+        - import django.urls.reverse
+        - import users.models.CustomUser
+      - Classes:
+        - Course
+        - Module
+        - Enrollment
+        - EnrollmentNotification
+        - Feedback
+        - ModuleNotification
+        - Like
+      - Methods:
+        - get_course_picture_url
+        - __str__
+        - get_absolute_url
+    - 📄 routing.py
+      - Imports:
+        - import django.urls.re_path
+        - import ..consumers
+    - 📄 serializers.py
+      - Imports:
+        - import rest_framework.serializers
+        - import .models.Course
+        - import .models.Module
+      - Classes:
+        - ModuleSerializer
+        - CourseSerializer
+    - 📄 tasks.py
+    - 📄 tests.py
+      - Imports:
+        - import django.test.TestCase
+        - import django.test.Client
+        - import django.urls.reverse
+        - import django.contrib.auth.get_user_model
+        - import django.core.files.uploadedfile.SimpleUploadedFile
+        - import django.utils.text.slugify
+        - import django.core.exceptions.ValidationError
+        - import .models.Course
+        - import .models.Module
+        - import .models.Enrollment
+        - import .models.Feedback
+        - import .models.EnrollmentNotification
+        - import .models.ModuleNotification
+        - import .forms.CourseForm
+        - import .forms.ModuleForm
+        - import .forms.FeedbackForm
+        - import users.models.CustomUser
+      - Classes:
+        - CourseModelTests
+        - ModuleModelTests
+        - EnrollmentModelTests
+        - NotificationModelTests
+        - CourseFormTests
+        - ModuleFormTests
+        - FeedbackFormTests
+        - CourseViewTests
+        - ModuleViewTests
+        - NotificationViewTests
+      - Methods:
+        - setUp
+        - test_course_creation
+        - test_course_str_representation
+        - test_course_get_absolute_url
+        - test_course_get_course_picture_url
+        - test_module_creation
+        - test_module_str_representation
+        - test_module_ordering
+        - test_enrollment_creation
+        - test_enrollment_unique_together
+        - test_enrollment_str_representation
+        - test_enrollment_notification_creation
+        - test_module_notification_creation
+        - test_valid_course_form
+        - test_invalid_course_form
+        - test_valid_module_form
+        - test_invalid_module_form
+        - test_valid_feedback_form
+        - test_course_list_view
+        - test_course_detail_view
+        - test_course_create_view_authenticated_teacher
+        - test_course_create_view_authenticated_student
+        - test_enroll_course_authenticated
+        - test_module_create_view_authenticated_teacher
+        - test_module_create_view_authenticated_student
+        - test_delete_enrollment_notification_authenticated_teacher
+    - 📄 urls.py
+      - Imports:
+        - import django.urls.path
+        - import .views.(
+    - 📄 views.py
+      - Imports:
+        - import venv.create
+        - import django.shortcuts.render
+        - import django.shortcuts.get_object_or_404
+        - import django.shortcuts.redirect
+        - import django.views.generic.ListView
+        - import django.views.generic.DetailView
+        - import django.views.generic.CreateView
+        - import django.views.generic.UpdateView
+        - import django.views.generic.DeleteView
+        - import django.contrib.auth.mixins.LoginRequiredMixin
+        - import django.contrib.auth.mixins.UserPassesTestMixin
+        - import django.urls.reverse_lazy
+        - import django.urls.reverse
+        - import streamlit.success
+        - import .models.Course
+        - import .models.Module
+        - import .models.Enrollment
+        - import .models.Feedback
+        - import .models.EnrollmentNotification
+        - import .models.ModuleNotification
+        - import .models.Like
+        - import .forms.CourseForm
+        - import .forms.ModuleForm
+        - import .forms.FeedbackForm
+        - import django.contrib.messages
+        - import rest_framework.generics
+        - import rest_framework.permissions
+        - import .serializers.CourseSerializer
+        - import django.utils.text.slugify
+        - import django.http.HttpResponseForbidden
+        - import django.http.JsonResponse
+        - import django.contrib.auth.decorators.login_required
+        - import users.models.CustomUser
+        - import rest_framework.decorators.api_view
+        - import rest_framework.decorators.permission_classes
+        - import rest_framework.response.Response
+        - import django.views.decorators.csrf.csrf_exempt
+        - import django.views.decorators.http.require_http_methods
+      - Functions:
+        - get_user_likes
+        - toggle_like
+        - enroll_course
+        - delete_notification
+        - remove_student
+        - submit_feedback
+        - delete_module_notification
+      - Classes:
+        - CourseListView
+        - CourseDetailView
+        - CourseCreateView
+        - CourseUpdateView
+        - CourseDeleteView
+        - CourseListAPIView
+        - CourseDetailAPIView
+        - ModuleCreateView
+        - ModuleUpdateView
+        - ModuleDeleteView
+      - Methods:
+        - get_context_data
+        - form_valid
+        - test_func
+        - get_course
+        - get_success_url
+  - 📄 db.sqlite3
+  - 📄 dump.rdb
+  - 📄 manage.py
+    - Imports:
+      - import os
+      - import sys
+    - Functions:
+      - main
+  - 📁 media/
+    - 📁 course_pics/
+      - 📄 default.jpg
+    - 📁 module_files/
+      - 📄 Interaction_midterm.pdf
+      - 📄 Interaction_midterm_xSVy8gw.pdf
+    - 📁 profile_pics/
+      - 📄 cat-pfp-tie-cat--tie-cat.webp
+      - 📄 default.jpg
+  - 📄 requirements.txt
+  - 📁 static/
+    - 📁 css/
+      - 📄 style.css
+    - 📁 js/
+      - 📄 main.js
+  - 📁 template/
+    - 📄 base.html
+    - 📁 courses/
+      - 📄 course_delete.html
+      - 📄 course_detail.html
+      - 📄 course_feedback.html
+      - 📄 course_form.html
+      - 📄 course_list.html
+      - 📄 course_material.html
+      - 📄 module_delete.html
+      - 📄 module_form.html
+    - 📁 users/
+      - 📄 login.html
+      - 📄 logout.html
+      - 📄 profile.html
+      - 📄 register.html
+  - 📁 users/
+    - 📄 __init__.py
+    - 📄 admin.py
+    - 📄 apps.py
+      - Imports:
+        - import django.apps.AppConfig
+      - Classes:
+        - UsersConfig
+    - 📄 forms.py
+      - Imports:
+        - import pickle.FALSE
+        - import django.forms
+        - import django.contrib.auth.forms.UserCreationForm
+        - import django.contrib.auth.get_user_model
+        - import .models.Profile
+      - Classes:
+        - UserRegisterForm
+        - UserUpdateForm
+        - ProfileUpdateForm
+        - UserSearchForm
+      - Methods:
+        - save
+    - 📁 migrations/
+      - 📄 0001_initial.py
+        - Imports:
+          - import django.contrib.auth.models
+          - import django.contrib.auth.validators
+          - import django.db.models.deletion
+          - import django.utils.timezone
+          - import django.conf.settings
+          - import django.db.migrations
+          - import django.db.models
+        - Classes:
+          - Migration
+      - 📄 __init__.py
+    - 📄 models.py
+      - Imports:
+        - import django.db.models
+        - import django.contrib.auth.models.AbstractUser
+        - import django.db.models.signals.post_save
+        - import django.dispatch.receiver
+      - Functions:
+        - create_profile
+        - save_profile
+      - Classes:
+        - CustomUser
+        - Profile
+      - Methods:
+        - save
+        - __str__
+    - 📄 serializers.py
+      - Imports:
+        - import django.contrib.auth.get_user_model
+        - import django.contrib.auth.password_validation.validate_password
+        - import rest_framework.serializers
+      - Classes:
+        - UserSerializer
+      - Methods:
+        - create
+    - 📁 templates/
+      - 📁 users/
+        - 📄 user_profile.html
+        - 📄 user_search.html
+    - 📄 tests.py
+      - Imports:
+        - import django.test.TestCase
+        - import django.test.Client
+        - import django.urls.reverse
+        - import django.contrib.auth.get_user_model
+        - import django.core.files.uploadedfile.SimpleUploadedFile
+        - import django.core.exceptions.ValidationError
+        - import .models.CustomUser
+        - import .models.Profile
+        - import .forms.UserRegisterForm
+        - import .forms.UserUpdateForm
+        - import .forms.ProfileUpdateForm
+        - import .forms.UserSearchForm
+      - Classes:
+        - CustomUserModelTests
+        - ProfileModelTests
+        - UserRegisterFormTests
+        - UserUpdateFormTests
+        - ProfileUpdateFormTests
+        - UserSearchFormTests
+        - UserViewTests
+        - UserSearchFunctionalityTests
+      - Methods:
+        - setUp
+        - test_create_user
+        - test_create_superuser
+        - test_user_str_representation
+        - test_teacher_user_creation
+        - test_user_save_method
+        - test_profile_creation_signal
+        - test_profile_str_representation
+        - test_profile_status_choices
+        - test_valid_registration_form
+        - test_invalid_registration_form
+        - test_teacher_registration
+        - test_valid_user_update_form
+        - test_valid_profile_update_form
+        - test_valid_search_form
+        - test_search_form_with_only_query
+        - test_register_view_get
+        - test_register_view_post_valid
+        - test_profile_view_authenticated
+        - test_profile_update_post
+        - test_user_search_view_teacher_access
+        - test_user_search_view_student_access
+        - test_profile_view_by_id_authenticated
+        - test_search_by_username
+        - test_search_by_email
+        - test_search_by_status
+        - test_filter_teachers_only
+        - test_filter_students_only
+        - test_search_all_users
+    - 📄 urls.py
+      - Imports:
+        - import django.urls.path
+        - import ..views
+    - 📄 views.py
+      - Imports:
+        - import django.shortcuts.render
+        - import django.shortcuts.redirect
+        - import django.shortcuts.get_object_or_404
+        - import django.contrib.auth.login
+        - import django.contrib.auth.logout
+        - import django.contrib.auth.get_user_model
+        - import django.contrib.auth.decorators.login_required
+        - import django.contrib.messages
+        - import .forms.UserRegisterForm
+        - import .forms.UserUpdateForm
+        - import .forms.ProfileUpdateForm
+        - import .forms.UserSearchForm
+        - import django.http.HttpResponseForbidden
+        - import django.db.models.Q
+        - import .models.CustomUser
+        - import .serializers.UserSerializer
+        - import rest_framework.permissions.IsAuthenticated
+        - import rest_framework.permissions.AllowAny
+        - import rest_framework.generics
+      - Functions:
+        - register
+        - profile
+        - user_search
+        - profile_view
+      - Classes:
+        - CreateUserView
+- 📁 Frontend/
+- 📄 project-structure.md
