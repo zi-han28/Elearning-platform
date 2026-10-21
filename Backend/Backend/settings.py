@@ -91,9 +91,13 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     } 
 }
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "mongodb+srv://xuzihan_db_user:Zihanisawesome@clusterzihanelearning.fu8eoix.mongodb.net/",
+#     } 
+# }
 DATABASES["default"]= dj_database_url.parse("postgresql://e_learningdatabase_9ejw_user:12ZfcAjrbPP6HmKZiwaOQZfEAAMPoVGI@dpg-db67g0942hec73b70di0-a.singapore-postgres.render.com/e_learningdatabase_9ejw")
-
-# postgresql://e_learningdatabase_9ejw_user:12ZfcAjrbPP6HmKZiwaOQZfEAAMPoVGI@dpg-db67g0942hec73b70di0-a/e_learningdatabase_9ejw 
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -182,3 +186,4 @@ LOGOUT_REDIRECT_URL = 'login'
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+

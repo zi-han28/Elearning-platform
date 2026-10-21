@@ -4,9 +4,97 @@ Files listed in .gitignore will be excluded.
 
 ## Configuration Files
 
+### requirements.txt
+```
+altair==5.5.0
+amqp==5.3.1
+asgiref==3.9.1
+attrs==25.3.0
+autobahn==24.4.2
+Automat==25.4.16
+billiard==4.2.1
+blinker==1.9.0
+boto3==1.40.17
+botocore==1.40.17
+cachetools==6.1.0
+celery==5.5.3
+certifi==2025.8.3
+cffi==1.17.1
+channels==4.3.1
+channels_redis==4.3.0
+charset-normalizer==3.4.3
+click==8.2.1
+click-didyoumean==0.3.1
+click-plugins==1.1.1.2
+click-repl==0.3.0
+constantly==23.10.4
+crispy-bootstrap5==2025.6
+cryptography==45.0.6
+daphne==4.2.1
+Django==5.2.5
+django-allauth==65.10.0
+django-crispy-forms==2.4
+django-storages==1.14.6
+djangorestframework==3.16.1
+gitdb==4.0.12
+GitPython==3.1.45
+gunicorn==23.0.0
+hyperlink==21.0.0
+idna==3.10
+incremental==24.7.2
+Jinja2==3.1.6
+jmespath==1.0.1
+jsonschema==4.25.1
+jsonschema-specifications==2025.4.1
+kombu==5.5.4
+MarkupSafe==3.0.2
+msgpack==1.1.1
+narwhals==2.1.2
+numpy==2.3.2
+packaging==25.0
+pandas==2.3.1
+pillow==11.3.0
+prompt_toolkit==3.0.51
+protobuf==6.32.0
+pyarrow==21.0.0
+pyasn1==0.6.1
+pyasn1_modules==0.4.2
+pycparser==2.22
+pydeck==0.9.1
+pyOpenSSL==25.1.0
+python-dateutil==2.9.0.post0
+pytz==2025.2
+redis==6.4.0
+referencing==0.36.2
+requests==2.32.5
+rpds-py==0.27.0
+s3transfer==0.13.1
+service-identity==24.2.0
+six==1.17.0
+smmap==5.0.2
+sqlparse==0.5.3
+streamlit==1.48.1
+tenacity==9.1.2
+toml==0.10.2
+tornado==6.5.2
+Twisted==25.5.0
+txaio==25.6.1
+typing_extensions==4.14.1
+tzdata==2025.2
+urllib3==2.5.0
+vine==5.1.0
+wcwidth==0.2.13
+whitenoise==6.9.0
+zope.interface==7.2
+django-cors-headers
+djangorestframework-simplejwt
+PyJWT
+psycopg2-binary
+python-dotenv
+```
+
 ## File Structure
 
-- 📄 .gitignore
 - 📁 Backend/
   - 📁 Backend/
     - 📄 __init__.py
@@ -30,6 +118,7 @@ Files listed in .gitignore will be excluded.
         - import datetime.timedelta
         - import dotenv.load_dotenv
         - import os
+        - import dj_database_url
     - 📄 urls.py
       - Imports:
         - import django.contrib.admin
@@ -191,18 +280,48 @@ Files listed in .gitignore will be excluded.
         - get_course_picture_url
         - __str__
         - get_absolute_url
+    - 📄 permissions.py
+      - Imports:
+        - import rest_framework.permissions
+      - Classes:
+        - IsTeacher
+        - IsCourseTeacherOrReadOnly
+      - Methods:
+        - has_permission
+        - has_object_permission
     - 📄 routing.py
       - Imports:
         - import django.urls.re_path
         - import ..consumers
     - 📄 serializers.py
       - Imports:
+        - import django.utils.text.slugify
         - import rest_framework.serializers
+        - import users.serializers.PublicUserSerializer
         - import .models.Course
         - import .models.Module
+        - import .models.Enrollment
+        - import .models.Feedback
+        - import .models.EnrollmentNotification
+        - import .models.ModuleNotification
+        - import .models.Like
       - Classes:
         - ModuleSerializer
+        - FeedbackSerializer
+        - CourseListSerializer
         - CourseSerializer
+        - EnrollmentNotificationSerializer
+        - ModuleNotificationSerializer
+      - Methods:
+        - validate_order
+        - _user
+        - get_enrolled
+        - get_liked
+        - get_user_feedback_exists
+        - get_enrolled_students
+        - create
+        - update
+        - validate_title
     - 📄 tasks.py
     - 📄 tests.py
       - Imports:
@@ -267,7 +386,6 @@ Files listed in .gitignore will be excluded.
         - import .views.(
     - 📄 views.py
       - Imports:
-        - import venv.create
         - import django.shortcuts.render
         - import django.shortcuts.get_object_or_404
         - import django.shortcuts.redirect
@@ -280,7 +398,6 @@ Files listed in .gitignore will be excluded.
         - import django.contrib.auth.mixins.UserPassesTestMixin
         - import django.urls.reverse_lazy
         - import django.urls.reverse
-        - import streamlit.success
         - import .models.Course
         - import .models.Module
         - import .models.Enrollment
@@ -294,7 +411,14 @@ Files listed in .gitignore will be excluded.
         - import django.contrib.messages
         - import rest_framework.generics
         - import rest_framework.permissions
-        - import .serializers.CourseSerializer
+        - import .serializers.(
+        - import .permissions.IsTeacher
+        - import .permissions.IsCourseTeacherOrReadOnly
+        - import rest_framework.status
+        - import rest_framework.exceptions.PermissionDenied
+        - import rest_framework.parsers.MultiPartParser
+        - import rest_framework.parsers.FormParser
+        - import rest_framework.parsers.JSONParser
         - import django.utils.text.slugify
         - import django.http.HttpResponseForbidden
         - import django.http.JsonResponse
@@ -313,25 +437,35 @@ Files listed in .gitignore will be excluded.
         - remove_student
         - submit_feedback
         - delete_module_notification
+        - enroll_course_api
+        - remove_student_api
+        - feedback_api
+        - notifications_api
       - Classes:
         - CourseListView
         - CourseDetailView
         - CourseCreateView
         - CourseUpdateView
         - CourseDeleteView
-        - CourseListAPIView
-        - CourseDetailAPIView
         - ModuleCreateView
         - ModuleUpdateView
         - ModuleDeleteView
+        - CourseListAPIView
+        - CourseDetailAPIView
+        - ModuleListCreateAPIView
+        - ModuleDetailAPIView
+        - EnrollmentNotificationDeleteAPIView
+        - ModuleNotificationDeleteAPIView
       - Methods:
         - get_context_data
         - form_valid
         - test_func
         - get_course
         - get_success_url
-  - 📄 db.sqlite3
-  - 📄 dump.rdb
+        - get_serializer_class
+        - get_permissions
+        - perform_create
+        - get_queryset
   - 📄 manage.py
     - Imports:
       - import os
@@ -340,14 +474,8 @@ Files listed in .gitignore will be excluded.
       - main
   - 📁 media/
     - 📁 course_pics/
-      - 📄 default.jpg
     - 📁 module_files/
-      - 📄 Interaction_midterm.pdf
-      - 📄 Interaction_midterm_xSVy8gw.pdf
     - 📁 profile_pics/
-      - 📄 cat-pfp-tie-cat--tie-cat.webp
-      - 📄 default.jpg
-  - 📄 requirements.txt
   - 📁 static/
     - 📁 css/
       - 📄 style.css
@@ -421,13 +549,18 @@ Files listed in .gitignore will be excluded.
         - __str__
     - 📄 serializers.py
       - Imports:
+        - import attr.fields
         - import django.contrib.auth.get_user_model
         - import django.contrib.auth.password_validation.validate_password
         - import rest_framework.serializers
+        - import .models.Profile
       - Classes:
         - UserSerializer
+        - ProfileSerializer
+        - PublicUserSerializer
       - Methods:
         - create
+        - update
     - 📁 templates/
       - 📁 users/
         - 📄 user_profile.html
@@ -489,8 +622,12 @@ Files listed in .gitignore will be excluded.
       - Imports:
         - import django.urls.path
         - import ..views
+        - import .views.MyProfileView
+        - import .views.UserSearchView
+        - import .views.UserDetailView
     - 📄 views.py
       - Imports:
+        - import django.db.migrations.serializer
         - import django.shortcuts.render
         - import django.shortcuts.redirect
         - import django.shortcuts.get_object_or_404
@@ -506,10 +643,15 @@ Files listed in .gitignore will be excluded.
         - import django.http.HttpResponseForbidden
         - import django.db.models.Q
         - import .models.CustomUser
+        - import .serializers.ProfileSerializer
         - import .serializers.UserSerializer
+        - import .serializers.PublicUserSerializer
         - import rest_framework.permissions.IsAuthenticated
         - import rest_framework.permissions.AllowAny
         - import rest_framework.generics
+        - import rest_framework.parsers.MultiPartParser
+        - import rest_framework.parsers.FormParser
+        - import rest_framework.parsers.JSONParser
       - Functions:
         - register
         - profile
@@ -517,5 +659,78 @@ Files listed in .gitignore will be excluded.
         - profile_view
       - Classes:
         - CreateUserView
+        - MyProfileView
+        - UserSearchView
+        - UserDetailView
+      - Methods:
+        - get_object
+        - get_queryset
 - 📁 Frontend/
+  - 📄 README.md
+  - 📄 index.html
+  - 📄 package-lock.json
+  - 📄 package.json
+  - 📁 public/
+    - 📄 favicon.svg
+    - 📄 icons.svg
+  - 📁 src/
+    - 📄 App.jsx
+      - Imports:
+        - import { useState } from 'react'
+        - import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+        - import Login from './pages/Login'
+        - import Register from './pages/Register'
+        - import Home from './pages/Home'
+        - import NotFound from './pages/NotFound'
+        - import ProtectedRoute from './components/ProtectedRoute'
+      - Functions:
+        - logout
+        - RegisterAndLogout
+        - App
+      - Methods:
+        - logout
+    - 📄 api.js
+      - Imports:
+        - import axios from "axios"
+        - import {ACCESS_TOKEN} from "./constants"
+    - 📁 assets/
+    - 📁 components/
+      - 📄 ProtectedRoute.jsx
+        - Imports:
+          - import { Navigate } from "react-router-dom"
+          - import { jwtDecode } from "jwt-decode"
+          - import api from "../api"
+          - import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants"
+          - import { useEffect, useState } from "react"
+        - Functions:
+          - ProtectedRoute
+          - refreshToken
+    - 📄 constants.js
+      - Exports:
+        - ACCESS_TOKEN
+        - REFRESH_TOKEN
+    - 📄 main.jsx
+      - Imports:
+        - import React from 'react'
+        - import ReactDOM from 'react-dom/client'
+        - import App from './App.jsx'
+    - 📁 pages/
+      - 📄 Home.jsx
+        - Functions:
+          - Home
+      - 📄 Login.jsx
+        - Functions:
+          - Login
+      - 📄 NotFound.jsx
+        - Functions:
+          - NotFound
+      - 📄 Register.jsx
+        - Functions:
+          - Register
+    - 📁 styles/
+  - 📄 vite.config.js
+    - Imports:
+      - import react from '@vitejs/plugin-react'
+      - import { defineConfig } from 'vite'
 - 📄 project-structure.md
+- 📄 requirements.txt

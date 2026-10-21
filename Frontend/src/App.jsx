@@ -1,16 +1,40 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import Login from './pages/login'
+import Register from './pages/register'
+import Home from './pages/home'
+import NotFound from './pages/NotFound'
+import ProtectedRoute from './components/ProtectedRoute'
+// import './App.css'
+
+function logout(){
+  localStorage.clear()
+  return <Navigate to="/login"></Navigate>
+}
+
+function RegisterAndLogout(){
+  localStorage.clear()
+  return <Register />
+}
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-     
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+                <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/login" element={<Login/>} />
+        <Route path="/register" element={<RegisterAndLogout/>}/> 
+        <Route path="*" element={<NotFound/>}></Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
