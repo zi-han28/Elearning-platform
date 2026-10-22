@@ -129,7 +129,7 @@ python-dotenv
         - import django.conf.urls.static.static
         - import users.views as user_views
         - import users.views.CreateUserView
-        - import rest_framework_simplejwt.views.TokenObtainPairView
+        - import users.views.CustomTokenView
         - import rest_framework_simplejwt.views.TokenRefreshView
     - 📄 wsgi.py
       - Imports:
@@ -478,7 +478,6 @@ python-dotenv
     - 📁 profile_pics/
   - 📁 static/
     - 📁 css/
-      - 📄 style.css
     - 📁 js/
       - 📄 main.js
   - 📁 template/
@@ -554,13 +553,16 @@ python-dotenv
         - import django.contrib.auth.password_validation.validate_password
         - import rest_framework.serializers
         - import .models.Profile
+        - import rest_framework_simplejwt.serializers.TokenObtainPairSerializer
       - Classes:
         - UserSerializer
         - ProfileSerializer
         - PublicUserSerializer
+        - CustomTokenSerializer
       - Methods:
         - create
         - update
+        - get_token
     - 📁 templates/
       - 📁 users/
         - 📄 user_profile.html
@@ -625,6 +627,7 @@ python-dotenv
         - import .views.MyProfileView
         - import .views.UserSearchView
         - import .views.UserDetailView
+        - import .views.CustomTokenView
     - 📄 views.py
       - Imports:
         - import django.db.migrations.serializer
@@ -646,12 +649,14 @@ python-dotenv
         - import .serializers.ProfileSerializer
         - import .serializers.UserSerializer
         - import .serializers.PublicUserSerializer
+        - import .serializers.CustomTokenSerializer
         - import rest_framework.permissions.IsAuthenticated
         - import rest_framework.permissions.AllowAny
         - import rest_framework.generics
         - import rest_framework.parsers.MultiPartParser
         - import rest_framework.parsers.FormParser
         - import rest_framework.parsers.JSONParser
+        - import rest_framework_simplejwt.views.TokenObtainPairView
       - Functions:
         - register
         - profile
@@ -662,6 +667,7 @@ python-dotenv
         - MyProfileView
         - UserSearchView
         - UserDetailView
+        - CustomTokenView
       - Methods:
         - get_object
         - get_queryset
@@ -678,11 +684,13 @@ python-dotenv
       - Imports:
         - import { useState } from 'react'
         - import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-        - import Login from './pages/Login'
-        - import Register from './pages/Register'
-        - import Home from './pages/Home'
+        - import Login from './pages/login'
+        - import Logout from './pages/Logout'
+        - import Register from './pages/register'
+        - import Home from './pages/home'
         - import NotFound from './pages/NotFound'
         - import ProtectedRoute from './components/ProtectedRoute'
+        - import Layout from './components/Layout'
       - Functions:
         - logout
         - RegisterAndLogout
@@ -695,6 +703,15 @@ python-dotenv
         - import {ACCESS_TOKEN} from "./constants"
     - 📁 assets/
     - 📁 components/
+      - 📄 Form.jsx
+      - 📄 Layout.jsx
+        - Imports:
+          - import { Link, Outlet, useLocation } from "react-router-dom"
+          - import { Navbar, Nav, Container } from "react-bootstrap"
+          - import { jwtDecode } from "jwt-decode"
+          - import { ACCESS_TOKEN } from "../constants"
+        - Functions:
+          - Layout
       - 📄 ProtectedRoute.jsx
         - Imports:
           - import { Navigate } from "react-router-dom"
@@ -719,8 +736,17 @@ python-dotenv
         - Functions:
           - Home
       - 📄 Login.jsx
+        - Imports:
+          - import { useState } from "react"
+          - import { Link, useNavigate } from "react-router-dom"
+          - import api from "../api"
+          - import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"
         - Functions:
           - Login
+          - handleSubmit
+      - 📄 Logout.jsx
+        - Functions:
+          - Logout
       - 📄 NotFound.jsx
         - Functions:
           - NotFound
@@ -728,9 +754,9 @@ python-dotenv
         - Functions:
           - Register
     - 📁 styles/
+      - 📄 style.css
   - 📄 vite.config.js
     - Imports:
       - import react from '@vitejs/plugin-react'
       - import { defineConfig } from 'vite'
-- 📄 project-structure.md
 - 📄 requirements.txt

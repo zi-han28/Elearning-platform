@@ -1,7 +1,7 @@
 # users/urls.py
 from django.urls import path
 from . import views
-from .views import MyProfileView, UserSearchView, UserDetailView
+from .views import MyProfileView, UserSearchView, UserDetailView, CustomTokenView
 
 urlpatterns = [
     path('api/profile', MyProfileView.as_view(), name='api_profile'),

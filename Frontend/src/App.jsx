@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/login'
+import Logout from './pages/Logout'
 import Register from './pages/register'
 import Home from './pages/home'
 import NotFound from './pages/NotFound'
 import ProtectedRoute from './components/ProtectedRoute'
-// import './App.css'
+import Layout from './components/Layout'
 
 function logout(){
   localStorage.clear()
@@ -22,17 +23,20 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-                <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<RegisterAndLogout/>}/> 
-        <Route path="*" element={<NotFound/>}></Route>
+        <Route element={<Layout/>}>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                  <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<Login/>} />
+          <Route path="/logout" element={<Logout/>}/>
+          <Route path="/register" element={<RegisterAndLogout/>}/> 
+          <Route path="*" element={<NotFound/>}></Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   )

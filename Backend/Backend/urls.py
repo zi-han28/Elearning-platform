@@ -6,13 +6,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from users import views as user_views
 from django.contrib.auth import views as auth_views 
-from users.views import CreateUserView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from users.views import CreateUserView, CustomTokenView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/user/register/', CreateUserView.as_view(), name='api_register'),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', CustomTokenView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api-auth/', include("rest_framework.urls")),
     path('register/', user_views.register, name='register'),

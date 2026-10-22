@@ -8,10 +8,11 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, UserSear
 from django.http import HttpResponseForbidden
 from django.db.models import Q
 from .models import CustomUser
-from .serializers import ProfileSerializer, UserSerializer, PublicUserSerializer
+from .serializers import ProfileSerializer, UserSerializer, PublicUserSerializer, CustomTokenSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 User = get_user_model()
 class CreateUserView(generics.CreateAPIView):
@@ -20,7 +21,7 @@ class CreateUserView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 class MyProfileView(generics.RetrieveAPIView):
-    serializer_class: ProfileSerializer
+    serializer_class = ProfileSerializer
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     def get_object(self):
         return self.request.user.profile
@@ -47,6 +48,9 @@ class UserSearchView(generics.ListAPIView):
 class UserDetailView(generics.RetrieveAPIView):
     queryset = User.objects.select_related("profile")
     serializer_class = PublicUserSerializer
+
+class CustomTokenView(TokenObtainPairView):
+    serializer_class = CustomTokenSerializer
 
 
 # register funciton

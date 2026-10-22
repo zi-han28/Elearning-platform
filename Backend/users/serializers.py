@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from .models import Profile
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 User = get_user_model()
 
@@ -37,4 +38,12 @@ class PublicUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "is_teacher", "is_student", "status", "profile_picture"]
-        
+
+
+class CustomTokenSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token["username"] = user.username
+        token["is_teacher"] = user.is_teacher
+        return token
