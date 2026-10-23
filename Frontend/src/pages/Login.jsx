@@ -50,7 +50,7 @@ function Login() {
                     </form>
                     <div className="mt-3 text-center">
                     <small className="text-muted">
-                        Need an account? <Link to="/register">Register</Link>
+                        Do not have an account with us? <Link to="/register">Register</Link>
                     </small>
                     </div>
                 </div>
