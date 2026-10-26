@@ -20,7 +20,7 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-class MyProfileView(generics.RetrieveAPIView):
+class MyProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     def get_object(self):

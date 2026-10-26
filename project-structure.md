@@ -499,6 +499,11 @@ python-dotenv
   - 📁 users/
     - 📄 __init__.py
     - 📄 admin.py
+    - 📄 api_urls.py
+      - Imports:
+        - import django.urls.path
+        - import rest_framework_simplejwt.views.TokenRefreshView
+        - import .views.(
     - 📄 apps.py
       - Imports:
         - import django.apps.AppConfig
@@ -560,6 +565,7 @@ python-dotenv
         - PublicUserSerializer
         - CustomTokenSerializer
       - Methods:
+        - validate
         - create
         - update
         - get_token
@@ -624,10 +630,6 @@ python-dotenv
       - Imports:
         - import django.urls.path
         - import ..views
-        - import .views.MyProfileView
-        - import .views.UserSearchView
-        - import .views.UserDetailView
-        - import .views.CustomTokenView
     - 📄 views.py
       - Imports:
         - import django.db.migrations.serializer
@@ -703,7 +705,6 @@ python-dotenv
         - import {ACCESS_TOKEN} from "./constants"
     - 📁 assets/
     - 📁 components/
-      - 📄 Form.jsx
       - 📄 Layout.jsx
         - Imports:
           - import { Link, Outlet, useLocation } from "react-router-dom"
@@ -730,9 +731,13 @@ python-dotenv
       - Imports:
         - import React from 'react'
         - import ReactDOM from 'react-dom/client'
+        - import { Navbar, Nav, Container } from "react-bootstrap"
         - import App from './App.jsx'
     - 📁 pages/
       - 📄 Home.jsx
+        - Imports:
+          - import {useState, useEffect} from "react"
+          - import api from "../api"
         - Functions:
           - Home
       - 📄 Login.jsx
@@ -750,13 +755,30 @@ python-dotenv
       - 📄 NotFound.jsx
         - Functions:
           - NotFound
-      - 📄 Register.jsx
+      - 📄 Profile.jsx
+        - Imports:
+          - import {useState, useEffect} from "react"
+          - import { data, Link, useNavigate } from "react-router-dom"
+          - import api from "../api"
         - Functions:
+          - Profile
+          - handleChange
+          - msg
+      - 📄 Register.jsx
+        - Imports:
+          - import { useState } from "react"
+          - import { Link, useNavigate } from "react-router-dom"
+          - import api from "../api"
+        - Functions:
+          - Field
           - Register
+          - handleChange
+          - handleSubmit
     - 📁 styles/
       - 📄 style.css
   - 📄 vite.config.js
     - Imports:
       - import react from '@vitejs/plugin-react'
       - import { defineConfig } from 'vite'
+- 📄 project-structure.md
 - 📄 requirements.txt

@@ -32,6 +32,8 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>}/>
+          
           <Route path="/login" element={<Login/>} />
           <Route path="/logout" element={<Logout/>}/>
           <Route path="/register" element={<RegisterAndLogout/>}/> 
