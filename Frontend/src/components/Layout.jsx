@@ -2,9 +2,11 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { jwtDecode } from "jwt-decode";
 import { ACCESS_TOKEN } from "../constants";
+import { useProfile } from "./ProfileContext";
 
 function Layout() {
     useLocation();
+    const { profile } = useProfile();
     const token = localStorage.getItem(ACCESS_TOKEN);
     const user = token ? jwtDecode(token) : null;
 
@@ -25,7 +27,17 @@ function Layout() {
                     <Nav>
                     {user ? (
                         <>
-                        <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
+                        <Nav.Link as={Link} to="/profile" className="d-flex align-items-center">
+                            {profile?.profile_picture && (
+                                <img
+                                    src={profile.profile_picture}
+                                    alt=""
+                                    className="rounded-circle me-2"
+                                    style={{ width: 28, height: 28, objectFit: "cover" }}
+                                />
+                            )}
+                            Profile
+                        </Nav.Link>
                         <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
                         </>
                     ) : (

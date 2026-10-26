@@ -7,6 +7,7 @@ import Home from './pages/home'
 import NotFound from './pages/NotFound'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
+import { ProfileProvider } from './components/ProfileContext'
 
 function logout(){
   localStorage.clear()
@@ -22,6 +23,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ProfileProvider>
       <Routes>
         <Route element={<Layout/>}>
           <Route
@@ -40,6 +42,7 @@ function App() {
           <Route path="*" element={<NotFound/>}></Route>
         </Route>
       </Routes>
+      </ProfileProvider>
     </BrowserRouter>
   )
 }

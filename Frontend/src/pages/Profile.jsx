@@ -1,6 +1,7 @@
 import {useState, useEffect} from "react"
 import { data, Link, useNavigate } from "react-router-dom";
 import api from "../api"
+import { useProfile } from "../components/ProfileContext"
 
 const STATUS_OPTIONS = [
     { value: "active", label: "Active" },
@@ -10,24 +11,18 @@ const STATUS_OPTIONS = [
 ];
 
 function Profile(){
-    const [profile, setProfile] = useState(null);
+    const { profile, setProfile, loading } = useProfile();
     const [form, setForm] = useState({ status: "active", bio: "" });
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
     const [fileKey, setFileKey] = useState(0);
     const [errors, setErrors] = useState({});
     const [success, setSuccess] = useState("");
-    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     useEffect(()=>{
-        api
-        .get("/api/profile/")
-        .then((res)=> {
-            setProfile(res.data)
-            setForm({ status: res.data.status, bio: res.data.bio })
-        }).catch((err)=>alert(err)).finally(setLoading(false));
-    }, [])
+        if (profile) setForm({ status: profile.status, bio: profile.bio });
+    }, [profile])
 
     useEffect(()=>{
         if (!image){
