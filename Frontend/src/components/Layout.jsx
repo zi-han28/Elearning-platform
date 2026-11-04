@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav, Container} from "react-bootstrap";
+import { NotificationAlert } from "./Notifications";
 import { jwtDecode } from "jwt-decode";
 import { ACCESS_TOKEN } from "../constants";
 import { useProfile } from "./ProfileContext";
@@ -28,15 +29,18 @@ function Layout() {
                     {user ? (
                         <>
                         <Nav.Link as={Link} to="/profile" className="d-flex align-items-center">
-                            {profile?.profile_picture && (
+                            {profile?.profile_picture ? (
                                 <img
                                     src={profile.profile_picture}
                                     alt=""
                                     className="rounded-circle me-2"
                                     style={{ width: 28, height: 28, objectFit: "cover" }}
                                 />
-                            )}
-                            Profile
+                            ):(    <span className="rounded-circle me-2 bg-secondary d-inline-flex align-items-center justify-content-center"
+                            style={{ width: 28, height: 28, fontSize: 12, color: "#6d29e4" }}
+                            >
+                            {profile?.username?.[0]?.toUpperCase() ?? "?"}
+                            </span>) }
                         </Nav.Link>
                         <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
                         </>
@@ -50,8 +54,9 @@ function Layout() {
                 </Navbar.Collapse>
                 </Container>
             </Navbar>
-
+            
             <div className="container mt-4">
+                <NotificationAlert/>
                 <Outlet />
             </div>
 

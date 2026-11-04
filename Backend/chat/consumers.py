@@ -4,35 +4,42 @@ from django.contrib.auth.models import AnonymousUser
 from .models import ChatMessage
 from django.utils import timezone
 from courses.models import Course
+from channels.db import database_sync_to_async
 
 # WebSocket chat consumer 
 class ChatConsumer(AsyncWebsocketConsumer):
+
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['course_slug']
         self.room_group_name = f'chat_{self.room_name}'
         self.user = self.scope.get('user', AnonymousUser())
 
+        # Only allow authenticated users
+        if isinstance(self.user, AnonymousUser):
+            await self.close()
+            return
         try:
             # Get course object
             self.course = await Course.objects.aget(slug=self.room_name)
-            
-            # Only allow authenticated users
-            if isinstance(self.user, AnonymousUser):
-                await self.close()
-                return
-                
-            # Join room group
-            await self.channel_layer.group_add(
-                self.room_group_name,
-                self.channel_name
-            )
-            await self.accept()
-            
         except Course.DoesNotExist:
             await self.close()
-        except Exception as e:
-            print(f"Connection error: {str(e)}")
+            return
+            
+        
+        # Authorize: teacher OR enrolled student
+        if not await self.can_join():
             await self.close()
+            return
+
+        # Join room group
+        await self.channel_layer.group_add(self.room_group_name, self.channel_name)    
+        await self.accept()
+
+    @database_sync_to_async
+    def can_join(self):
+        if self.user == self.course.teacher:
+            return True
+        return self.course.students.filter(pk=self.user.pk).exists()
 
     async def disconnect(self, close_code):
         # Leave room group

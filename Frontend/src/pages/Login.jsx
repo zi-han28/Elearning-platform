@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import { useNotification } from "../components/Notifications";
 
 function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const {notify}= useNotification()
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -18,6 +20,7 @@ function Login() {
         const res = await api.post("/api/token/", { username, password });
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        notify("You have been succesfully logged in")
         navigate("/");
         } catch {
         setError("Invalid username or password");

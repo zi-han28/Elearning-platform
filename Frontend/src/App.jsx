@@ -5,9 +5,12 @@ import Logout from './pages/Logout'
 import Register from './pages/register'
 import Home from './pages/home'
 import NotFound from './pages/NotFound'
+import Profile from './pages/Profile'
+
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
 import { ProfileProvider } from './components/ProfileContext'
+import { NotificationProvider } from './components/Notifications'
 
 function logout(){
   localStorage.clear()
@@ -23,26 +26,27 @@ function App() {
 
   return (
     <BrowserRouter>
-      <ProfileProvider>
-      <Routes>
-        <Route element={<Layout/>}>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                  <Home />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="/profile" element={<ProtectedRoute><Profile/></ProtectedRoute>}/>
-          
-          <Route path="/login" element={<Login/>} />
-          <Route path="/logout" element={<Logout/>}/>
-          <Route path="/register" element={<RegisterAndLogout/>}/> 
-          <Route path="*" element={<NotFound/>}></Route>
-        </Route>
-      </Routes>
-      </ProfileProvider>
+    <NotificationProvider>
+        <ProfileProvider>
+        <Routes>
+          <Route element={<Layout/>}>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                    <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>}/>         
+            <Route path="/login" element={<Login/>} />
+            <Route path="/logout" element={<Logout/>}/>
+            <Route path="/register" element={<Register/>}/> 
+            <Route path="*" element={<NotFound/>}></Route>
+          </Route>
+        </Routes>
+        </ProfileProvider>
+      </NotificationProvider>
     </BrowserRouter>
   )
 }

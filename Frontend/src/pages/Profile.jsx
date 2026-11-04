@@ -2,6 +2,7 @@ import {useState, useEffect} from "react"
 import { data, Link, useNavigate } from "react-router-dom";
 import api from "../api"
 import { useProfile } from "../components/ProfileContext"
+import { useNotification } from "../components/Notifications";
 
 const STATUS_OPTIONS = [
     { value: "active", label: "Active" },
@@ -19,6 +20,7 @@ function Profile(){
     const [errors, setErrors] = useState({});
     const [success, setSuccess] = useState("");
     const [saving, setSaving] = useState(false);
+    const {notify} = useNotification()
 
     useEffect(()=>{
         if (profile) setForm({ status: profile.status, bio: profile.bio });
@@ -42,7 +44,6 @@ function Profile(){
         e.preventDefault();
         setSaving(true);
         setErrors({});
-        setSuccess("");
 
         const data = new FormData();
         data.append("status", form.status);
@@ -54,7 +55,7 @@ function Profile(){
             setProfile(res.data)
             setImage(null)
             setFileKey((k)=>k+1);
-            setSuccess("Your account has been updated!");
+            notify("Your account has been updated!");
         }catch(err){
             const d = err.response?.data;
             setErrors(
@@ -75,12 +76,11 @@ function Profile(){
 
 
     return(
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header"><h2>Profile</h2></div>
+        <div className="row justify-content-center">
+            <div className="col-md-8">
+                <div className="card">
+                    <div className="card-header"><h2>Profile</h2></div>
                     <div className="card-body">
-                        {success && <div className="alert alert-success">{success}</div>}
                         {msg("non_field_errors") && (<div className="alert alert-danger">{msg("non_field_errors")}</div>)}
                         <div className="d-flex align-items-center mb-4">
                             <img 
@@ -102,7 +102,7 @@ function Profile(){
                                     id="profile_picture"
                                     type="file"
                                     accept="image/*"
-                                    className={`form-control ${msg("profile_picture")? "is-Invalid": ""}`}
+                                    className={`form-control ${msg("profile_picture")? "is-invalid": ""}`}
                                     onChange={(e)=> setImage(e.target.files[0]) || null}/>
                                 {msg("profile_picture") && (<div className="invalid-feedback">{msg("profile_picture")}</div>)}
                             </div>

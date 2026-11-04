@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api";
+import { useNotification } from "../components/Notifications";
 
 function Field({ label, name, type = "text", form, errors, onChange }) {
     const msg = errors[name] && [].concat(errors[name]).join(" ");
@@ -22,6 +23,7 @@ function Field({ label, name, type = "text", form, errors, onChange }) {
 }
 
 function Register() {
+    const {notify} = useNotification();
     const [form, setForm] = useState({
         username: "", email: "", password: "", password2: "", is_teacher: false,
     });
@@ -40,6 +42,7 @@ function Register() {
         setErrors({});
         try {
         await api.post("/api/user/register/", form);
+        notify("You have succesfully registered an account with us!")
         navigate("/login");
         } catch (err) {
         const data = err.response?.data;

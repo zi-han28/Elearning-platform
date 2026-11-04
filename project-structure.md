@@ -107,10 +107,20 @@ python-dotenv
         - import channels.auth.AuthMiddlewareStack
         - import channels.security.websocket.AllowedHostsOriginValidator
         - import chat.routing
+        - import jwt_ws_middleware.JWTAuthMiddleware
     - 📄 celery.py
       - Imports:
         - import os
         - import celery.Celery
+    - 📄 jwt_ws_middleware.py
+      - Imports:
+        - import urllib.parse.parse_qs
+        - import channels.db.database_sync_to_async
+        - import channels.middleware.BaseMiddleware
+      - Functions:
+        - get_user
+      - Classes:
+        - JWTAuthMiddleware
     - 📄 settings.py
       - Imports:
         - import os
@@ -151,6 +161,7 @@ python-dotenv
         - import .models.ChatMessage
         - import django.utils.timezone
         - import courses.models.Course
+        - import channels.db.database_sync_to_async
       - Classes:
         - ChatConsumer
     - 📁 migrations/
@@ -190,6 +201,14 @@ python-dotenv
       - Imports:
         - import django.urls.re_path
         - import ..consumers
+    - 📄 serializers.py
+      - Imports:
+        - import django.utils.text.slugify
+        - import rest_framework.serializers
+        - import users.serializers.PublicUserSerializer
+        - import .models.ChatMessage
+      - Classes:
+        - ChatMessageSerializer
     - 📁 templates/
       - 📁 chat/
         - 📄 room.html
@@ -215,6 +234,7 @@ python-dotenv
       - Imports:
         - import django.urls.path
         - import ..views
+        - import views.ChatHistoryAPIView
     - 📄 views.py
       - Imports:
         - import django.shortcuts.render
@@ -222,8 +242,15 @@ python-dotenv
         - import courses.models.Course
         - import django.contrib.auth.decorators.login_required
         - import .models.ChatMessage
+        - import rest_framework.generics
+        - import rest_framework.permissions
+        - import .serializers.ChatMessageSerializer
       - Functions:
         - chat_room
+      - Classes:
+        - ChatHistoryAPIView
+      - Methods:
+        - get_queryset
   - 📁 courses/
     - 📄 __init__.py
     - 📄 admin.py
@@ -476,6 +503,7 @@ python-dotenv
     - 📁 course_pics/
     - 📁 module_files/
     - 📁 profile_pics/
+      - 📄 cat-pfp-tie-cat--tie-cat.webp
   - 📁 static/
     - 📁 css/
     - 📁 js/
@@ -691,8 +719,11 @@ python-dotenv
         - import Register from './pages/register'
         - import Home from './pages/home'
         - import NotFound from './pages/NotFound'
+        - import Profile from './pages/Profile'
         - import ProtectedRoute from './components/ProtectedRoute'
         - import Layout from './components/Layout'
+        - import { ProfileProvider } from './components/ProfileContext'
+        - import { NotificationProvider } from './components/Notifications'
       - Functions:
         - logout
         - RegisterAndLogout
@@ -708,11 +739,40 @@ python-dotenv
       - 📄 Layout.jsx
         - Imports:
           - import { Link, Outlet, useLocation } from "react-router-dom"
-          - import { Navbar, Nav, Container } from "react-bootstrap"
+          - import { Navbar, Nav, Container} from "react-bootstrap"
+          - import { NotificationAlert } from "./Notifications"
           - import { jwtDecode } from "jwt-decode"
           - import { ACCESS_TOKEN } from "../constants"
+          - import { useProfile } from "./ProfileContext"
         - Functions:
           - Layout
+      - 📄 Notifications.jsx
+        - Imports:
+          - import { createContext, useCallback, useContext, useEffect, useState } from "react"
+          - import { useLocation } from "react-router-dom"
+          - import api from "../api"
+          - import { ACCESS_TOKEN } from "../constants"
+          - import {  Toast, ToastContainer } from "react-bootstrap"
+        - Exports:
+          - NotificationProvider
+          - useNotification
+          - NotificationAlert
+        - Functions:
+          - NotificationProvider
+          - useNotification
+          - NotificationAlert
+      - 📄 ProfileContext.jsx
+        - Imports:
+          - import { createContext, useContext, useEffect, useState } from "react"
+          - import { useLocation } from "react-router-dom"
+          - import api from "../api"
+          - import { ACCESS_TOKEN } from "../constants"
+        - Exports:
+          - ProfileProvider
+          - useProfile
+        - Functions:
+          - ProfileProvider
+          - useProfile
       - 📄 ProtectedRoute.jsx
         - Imports:
           - import { Navigate } from "react-router-dom"
@@ -746,10 +806,15 @@ python-dotenv
           - import { Link, useNavigate } from "react-router-dom"
           - import api from "../api"
           - import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"
+          - import { useNotification } from "../components/Notifications"
         - Functions:
           - Login
           - handleSubmit
       - 📄 Logout.jsx
+        - Imports:
+          - import { useEffect } from "react"
+          - import { Link } from "react-router-dom"
+          - import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"
         - Functions:
           - Logout
       - 📄 NotFound.jsx
@@ -760,6 +825,8 @@ python-dotenv
           - import {useState, useEffect} from "react"
           - import { data, Link, useNavigate } from "react-router-dom"
           - import api from "../api"
+          - import { useProfile } from "../components/ProfileContext"
+          - import { useNotification } from "../components/Notifications"
         - Functions:
           - Profile
           - handleChange
@@ -769,6 +836,7 @@ python-dotenv
           - import { useState } from "react"
           - import { Link, useNavigate } from "react-router-dom"
           - import api from "../api"
+          - import { useNotification } from "../components/Notifications"
         - Functions:
           - Field
           - Register
