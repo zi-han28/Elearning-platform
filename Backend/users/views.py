@@ -14,6 +14,8 @@ from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+
+# API REACT
 User = get_user_model()
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -53,6 +55,7 @@ class CustomTokenView(TokenObtainPairView):
     serializer_class = CustomTokenSerializer
 
 
+# Django template functions
 # register funciton
 def register(request):
     if request.method == 'POST':

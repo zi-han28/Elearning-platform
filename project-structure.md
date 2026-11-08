@@ -107,12 +107,12 @@ python-dotenv
         - import channels.auth.AuthMiddlewareStack
         - import channels.security.websocket.AllowedHostsOriginValidator
         - import chat.routing
-        - import jwt_ws_middleware.JWTAuthMiddleware
+        - import .jwt_middleware.JWTAuthMiddleware
     - 📄 celery.py
       - Imports:
         - import os
         - import celery.Celery
-    - 📄 jwt_ws_middleware.py
+    - 📄 jwt_middleware.py
       - Imports:
         - import urllib.parse.parse_qs
         - import channels.db.database_sync_to_async
@@ -164,6 +164,8 @@ python-dotenv
         - import channels.db.database_sync_to_async
       - Classes:
         - ChatConsumer
+      - Methods:
+        - can_join
     - 📁 migrations/
       - 📄 0001_initial.py
         - Imports:
@@ -234,7 +236,7 @@ python-dotenv
       - Imports:
         - import django.urls.path
         - import ..views
-        - import views.ChatHistoryAPIView
+        - import .views.ChatHistoryAPIView
     - 📄 views.py
       - Imports:
         - import django.shortcuts.render
@@ -720,6 +722,7 @@ python-dotenv
         - import Home from './pages/home'
         - import NotFound from './pages/NotFound'
         - import Profile from './pages/Profile'
+        - import Search from './pages/search'
         - import ProtectedRoute from './components/ProtectedRoute'
         - import Layout from './components/Layout'
         - import { ProfileProvider } from './components/ProfileContext'
@@ -842,6 +845,14 @@ python-dotenv
           - Register
           - handleChange
           - handleSubmit
+      - 📄 Search.jsx
+        - Imports:
+          - import {useState} from "react"
+          - import { data, Link, useNavigate } from "react-router-dom"
+          - import api from "../api"
+        - Functions:
+          - UserSearch
+          - handleSelect
     - 📁 styles/
       - 📄 style.css
   - 📄 vite.config.js

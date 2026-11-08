@@ -54,7 +54,7 @@ function Layout() {
                 </Navbar.Collapse>
                 </Container>
             </Navbar>
-            
+
             <div className="container mt-4">
                 <NotificationAlert/>
                 <Outlet />

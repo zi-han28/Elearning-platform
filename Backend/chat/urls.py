@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from views import ChatHistoryAPIView
+from .views import ChatHistoryAPIView
 
 urlpatterns = [
     path('<slug:course_slug>/', views.chat_room, name='chat_room'),

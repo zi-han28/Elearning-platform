@@ -53,3 +53,10 @@ class CustomTokenSerializer(TokenObtainPairSerializer):
         token["username"] = user.username
         token["is_teacher"] = user.is_teacher
         return token
+
+
+class UserDetailSerializer(PublicUserSerializer):
+    bio = serializers.CharField(source = "profile.bio", read_only = True)
+
+    class Meta(PublicUserSerializer.Meta):
+        fields = PublicUserSerializer.Meta.fields +["email","bio"]

@@ -4,9 +4,9 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 import chat.routing
-from jwt_ws_middleware import JWTAuthMiddleware
+from .jwt_middleware import JWTAuthMiddleware
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'elearning_project.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Backend.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),

@@ -22,7 +22,7 @@ class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     profile_picture = models.ImageField(
         default='profile_pics/default.jpg',
-        upload_to='profile_pics/'
+        upload_to='profile_pics/',
     )
     bio = models.TextField(max_length=500, blank=True)
 
