@@ -87,18 +87,13 @@ function UserSearch(){
                             key={u.id}
                             className="list-group-item list-group-item-action d-flex align-items-center gap-3"
                         >
-                            {u.profile_picture ? (
+                            {u.profile_picture (
                             <img
                                 src={u.profile_picture}
                                 alt=""
                                 className="rounded-circle"
                                 style={{ width: 40, height: 40, objectFit: "cover" }}
                             />
-                            ):(
-                                <span className="rounded-circle me-2 bg-secondary d-inline-flex align-items-center justify-content-center"
-                                    style={{ width: 28, height: 28, fontSize: 12, color: "#6d29e4" }}>
-                                    {u.username?.[0]?.toUpperCase() ?? "?"}
-                            </span>
                             )}
                             <Link to={`/users/${u.id}`} className="stretched-link text-decoration-none fw-semibold">
                             {u.username}

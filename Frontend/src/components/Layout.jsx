@@ -23,31 +23,27 @@ function Layout() {
                     {user?.is_teacher && (
                         <Nav.Link as={Link} to="/courses/new">Create Course</Nav.Link>
                     )}
-                    {user && <Nav.Link as={Link} to="/users/search">Search Users</Nav.Link>}
+                    {user && <Nav.Link as={Link} to="/users/search" className="d-flex align-items-center">Search Users</Nav.Link>}
                     </Nav>
                     <Nav>
                     {user ? (
                         <>
                         <Nav.Link as={Link} to="/profile" className="d-flex align-items-center">
-                            {profile?.profile_picture ? (
+                            {profile?.profile_picture && (
                                 <img
                                     src={profile.profile_picture}
                                     alt=""
                                     className="rounded-circle me-2"
-                                    style={{ width: 28, height: 28, objectFit: "cover" }}
+                                    style={{ width: 40, height: 40, objectFit: "cover" }}
                                 />
-                            ):(    <span className="rounded-circle me-2 bg-secondary d-inline-flex align-items-center justify-content-center"
-                            style={{ width: 28, height: 28, fontSize: 12, color: "#6d29e4" }}
-                            >
-                            {profile?.username?.[0]?.toUpperCase() ?? "?"}
-                            </span>) }
+                            )}
                         </Nav.Link>
-                        <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
+                        <Nav.Link as={Link} to="/logout" className="d-flex align-items-center">Logout</Nav.Link>
                         </>
                     ) : (
                         <>
-                        <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                        <Nav.Link as={Link} to="/register">Register</Nav.Link>
+                        <Nav.Link as={Link} to="/login" className="d-flex align-items-center">Login</Nav.Link>
+                        <Nav.Link as={Link} to="/register" className="d-flex align-items-center">Register</Nav.Link>
                         </>
                     )}
                     </Nav>
