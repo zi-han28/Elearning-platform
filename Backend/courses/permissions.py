@@ -14,3 +14,10 @@ class IsCourseTeacherOrReadOnly(permissions.BasePermission):
             return True
         course = getattr(obj, "course", obj)
         return request.user == course.teacher
+
+
+class IsCourseTeacher(permissions.BasePermission):
+    # same as test_func in CourseUpdateView / CourseDeleteView
+    def has_object_permission(self, request, view, obj):
+        course = getattr(obj, "course", obj)
+        return request.user == course.teacher

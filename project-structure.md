@@ -258,6 +258,71 @@ python-dotenv
     - 📄 admin.py
       - Imports:
         - import django.contrib.admin
+    - 📄 api_views.py
+      - Imports:
+        - import django.shortcuts.render
+        - import django.shortcuts.get_object_or_404
+        - import django.shortcuts.redirect
+        - import django.views.generic.ListView
+        - import django.views.generic.DetailView
+        - import django.views.generic.CreateView
+        - import django.views.generic.UpdateView
+        - import django.views.generic.DeleteView
+        - import django.contrib.auth.mixins.LoginRequiredMixin
+        - import django.contrib.auth.mixins.UserPassesTestMixin
+        - import django.urls.reverse_lazy
+        - import django.urls.reverse
+        - import .models.Course
+        - import .models.Module
+        - import .models.Enrollment
+        - import .models.Feedback
+        - import .models.EnrollmentNotification
+        - import .models.ModuleNotification
+        - import .models.Like
+        - import .forms.CourseForm
+        - import .forms.ModuleForm
+        - import .forms.FeedbackForm
+        - import django.contrib.messages
+        - import rest_framework.generics
+        - import rest_framework.permissions
+        - import .serializers.(
+        - import .permissions.IsTeacher
+        - import .permissions.IsCourseTeacherOrReadOnly
+        - import rest_framework.status
+        - import rest_framework.exceptions.PermissionDenied
+        - import rest_framework.parsers.MultiPartParser
+        - import rest_framework.parsers.FormParser
+        - import rest_framework.parsers.JSONParser
+        - import django.utils.text.slugify
+        - import django.http.HttpResponseForbidden
+        - import django.http.JsonResponse
+        - import django.contrib.auth.decorators.login_required
+        - import users.models.CustomUser
+        - import rest_framework.decorators.api_view
+        - import rest_framework.decorators.permission_classes
+        - import rest_framework.response.Response
+        - import django.views.decorators.csrf.csrf_exempt
+        - import django.views.decorators.http.require_http_methods
+      - Functions:
+        - get_user_likes
+        - toggle_like
+        - enroll_course_api
+        - remove_student_api
+        - feedback_api
+        - notifications_api
+      - Classes:
+        - CourseListAPIView
+        - CourseDetailAPIView
+        - ModuleListCreateAPIView
+        - ModuleDetailAPIView
+        - EnrollmentNotificationDeleteAPIView
+        - ModuleNotificationDeleteAPIView
+      - Methods:
+        - get_serializer_class
+        - get_permissions
+        - perform_create
+        - get_course
+        - get_queryset
     - 📄 apps.py
       - Imports:
         - import django.apps.AppConfig
@@ -413,6 +478,7 @@ python-dotenv
       - Imports:
         - import django.urls.path
         - import .views.(
+        - import .api_views.(
     - 📄 views.py
       - Imports:
         - import django.shortcuts.render
@@ -466,10 +532,6 @@ python-dotenv
         - remove_student
         - submit_feedback
         - delete_module_notification
-        - enroll_course_api
-        - remove_student_api
-        - feedback_api
-        - notifications_api
       - Classes:
         - CourseListView
         - CourseDetailView
@@ -479,22 +541,12 @@ python-dotenv
         - ModuleCreateView
         - ModuleUpdateView
         - ModuleDeleteView
-        - CourseListAPIView
-        - CourseDetailAPIView
-        - ModuleListCreateAPIView
-        - ModuleDetailAPIView
-        - EnrollmentNotificationDeleteAPIView
-        - ModuleNotificationDeleteAPIView
       - Methods:
         - get_context_data
         - form_valid
         - test_func
         - get_course
         - get_success_url
-        - get_serializer_class
-        - get_permissions
-        - perform_create
-        - get_queryset
   - 📄 manage.py
     - Imports:
       - import os
@@ -506,6 +558,7 @@ python-dotenv
     - 📁 module_files/
     - 📁 profile_pics/
       - 📄 cat-pfp-tie-cat--tie-cat.webp
+      - 📄 default.jpg
   - 📁 static/
     - 📁 css/
     - 📁 js/
@@ -594,6 +647,7 @@ python-dotenv
         - ProfileSerializer
         - PublicUserSerializer
         - CustomTokenSerializer
+        - UserDetailSerializer
       - Methods:
         - validate
         - create
@@ -723,6 +777,7 @@ python-dotenv
         - import NotFound from './pages/NotFound'
         - import Profile from './pages/Profile'
         - import Search from './pages/search'
+        - import UserProfile from './pages/UserProfile'
         - import ProtectedRoute from './components/ProtectedRoute'
         - import Layout from './components/Layout'
         - import { ProfileProvider } from './components/ProfileContext'
@@ -797,6 +852,7 @@ python-dotenv
         - import { Navbar, Nav, Container } from "react-bootstrap"
         - import App from './App.jsx'
     - 📁 pages/
+      - 📄 CreateCourse.jsx
       - 📄 Home.jsx
         - Imports:
           - import {useState, useEffect} from "react"
@@ -852,12 +908,18 @@ python-dotenv
           - import api from "../api"
         - Functions:
           - UserSearch
-          - handleSelect
+          - clear
+      - 📄 UserProfile.jsx
+        - Imports:
+          - import { useEffect, useState } from "react"
+          - import { Link, useParams } from "react-router-dom"
+          - import api from "../api"
+        - Functions:
+          - UserProfile
     - 📁 styles/
       - 📄 style.css
   - 📄 vite.config.js
     - Imports:
       - import react from '@vitejs/plugin-react'
       - import { defineConfig } from 'vite'
-- 📄 project-structure.md
 - 📄 requirements.txt
