@@ -18,6 +18,9 @@ from .views import (
 )
 from .api_views import (
     CourseListAPIView, 
+    CourseCreateAPIView,
+    CourseUpdateAPIView,
+    CourseDeleteAPIView,
     CourseDetailAPIView,
     enroll_course_api,
     remove_student_api,
@@ -32,7 +35,9 @@ from .api_views import (
 urlpatterns = [
     # ----- JWT API endpoints -----
     path('api/courses/', CourseListAPIView.as_view(), name='api_course_list'),
-    path('api/courses/create', CourseListAPIView.as_view(), name='api_course_list'),
+    path('api/courses/create/', CourseCreateAPIView.as_view(), name='api_course_create'),
+    path('api/courses/<slug:slug>/update/', CourseUpdateAPIView.as_view(), name='api_course_update'),
+    path('api/courses/<slug:slug>/delete/', CourseUpdateAPIView.as_view(), name='api_course_delete'),
     path('api/courses/<int:pk>/enroll/', enroll_course_api, name='api_enroll_course'),
     path('api/courses/<int:course_id>/feedback/', feedback_api, name='api_feedback'),
     path('api/courses/<int:course_id>/like/', toggle_like, name='api_toggle_like'),

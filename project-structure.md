@@ -288,6 +288,7 @@ python-dotenv
         - import .serializers.(
         - import .permissions.IsTeacher
         - import .permissions.IsCourseTeacherOrReadOnly
+        - import .permissions.IsCourseTeacher
         - import rest_framework.status
         - import rest_framework.exceptions.PermissionDenied
         - import rest_framework.parsers.MultiPartParser
@@ -313,6 +314,8 @@ python-dotenv
       - Classes:
         - CourseListAPIView
         - CourseDetailAPIView
+        - CourseCreateAPIView
+        - CourseUpdateAPIView
         - ModuleListCreateAPIView
         - ModuleDetailAPIView
         - EnrollmentNotificationDeleteAPIView
@@ -380,6 +383,7 @@ python-dotenv
       - Classes:
         - IsTeacher
         - IsCourseTeacherOrReadOnly
+        - IsCourseTeacher
       - Methods:
         - has_permission
         - has_object_permission
@@ -922,4 +926,5 @@ python-dotenv
     - Imports:
       - import react from '@vitejs/plugin-react'
       - import { defineConfig } from 'vite'
+- 📄 project-structure.md
 - 📄 requirements.txt

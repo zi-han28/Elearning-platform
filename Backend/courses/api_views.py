@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy, reverse
+from numpy import save
 from .models import Course, Module, Enrollment, Feedback, EnrollmentNotification, ModuleNotification, Like
 from .forms import CourseForm, ModuleForm, FeedbackForm
 from django.contrib import messages
@@ -92,7 +93,7 @@ class CourseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
     lookup_field = 'slug'
 
-
+# course create api
 class CourseCreateAPIView(generics.CreateAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -102,11 +103,24 @@ class CourseCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(teacher=self.request.user)
 
+# course update api
 class CourseUpdateAPIView(generics.UpdateAPIView):
     queryset = Course.objects.select_related("teacher")
     serializer_class = CourseSerializer
     permission_classes = [permissions.IsAuthenticated, IsCourseTeacher]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
+    lookup_field = "slug"
+
+# course delete api  
+class CourseDeleteAPIView(generics.DestroyAPIView):
+    queryset = Course.objects.all()
+    permission_classes = [permissions.IsAuthenticated, IsCourseTeacher]
+    lookup_field = "slug"
+
+    def perform_destroy(self, instance):
+        if instance.course_picture and instance.course_picture.name != "course_pics/default.jpg":
+            instance.course_picutre.delete(save=False)
+        instance.delete()
 
 # enroll course api
 @api_view(['POST'])

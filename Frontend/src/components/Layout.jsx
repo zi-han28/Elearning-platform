@@ -21,7 +21,7 @@ function Layout() {
                     <Nav className="me-auto">
                     <Nav.Link as={Link} to="/">Courses</Nav.Link>
                     {user?.is_teacher && (
-                        <Nav.Link as={Link} to="/courses/new">Create Course</Nav.Link>
+                        <Nav.Link as={Link} to="/courses/create">Create Course</Nav.Link>
                     )}
                     {user && <Nav.Link as={Link} to="/users/search" className="d-flex align-items-center">Search Users</Nav.Link>}
                     </Nav>
