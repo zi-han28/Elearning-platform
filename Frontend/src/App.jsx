@@ -1,14 +1,15 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/login'
+import Login from './pages/Login'
 import Logout from './pages/Logout'
 import Register from './pages/register'
-import Home from './pages/home'
+import Home from './pages/Home'
 import NotFound from './pages/NotFound'
 import Profile from './pages/Profile'
 import Search from './pages/search'
 import UserProfile from './pages/UserProfile'
 import CreateCourses from './pages/CreateCourse'
+import CourseDetail from './pages/CourseDetail'
 
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
@@ -51,6 +52,7 @@ function App() {
 
             {/* Courses routes */}
             <Route path="/courses/create" element={<ProtectedRoute>< CreateCourses /></ProtectedRoute>}/>
+            <Route path="/courses/:slug" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>}/>
             <Route path="*" element={<NotFound/>}></Route>
           </Route>
         </Routes>

@@ -272,6 +272,7 @@ python-dotenv
         - import django.contrib.auth.mixins.UserPassesTestMixin
         - import django.urls.reverse_lazy
         - import django.urls.reverse
+        - import numpy.save
         - import .models.Course
         - import .models.Module
         - import .models.Enrollment
@@ -316,6 +317,7 @@ python-dotenv
         - CourseDetailAPIView
         - CourseCreateAPIView
         - CourseUpdateAPIView
+        - CourseDeleteAPIView
         - ModuleListCreateAPIView
         - ModuleDetailAPIView
         - EnrollmentNotificationDeleteAPIView
@@ -324,6 +326,7 @@ python-dotenv
         - get_serializer_class
         - get_permissions
         - perform_create
+        - perform_destroy
         - get_course
         - get_queryset
     - 📄 apps.py
@@ -551,6 +554,7 @@ python-dotenv
         - test_func
         - get_course
         - get_success_url
+  - 📄 db.sqlite3
   - 📄 manage.py
     - Imports:
       - import os
@@ -782,6 +786,8 @@ python-dotenv
         - import Profile from './pages/Profile'
         - import Search from './pages/search'
         - import UserProfile from './pages/UserProfile'
+        - import CreateCourses from './pages/CreateCourse'
+        - import CourseDetail from './pages/CourseDetail'
         - import ProtectedRoute from './components/ProtectedRoute'
         - import Layout from './components/Layout'
         - import { ProfileProvider } from './components/ProfileContext'
@@ -856,7 +862,25 @@ python-dotenv
         - import { Navbar, Nav, Container } from "react-bootstrap"
         - import App from './App.jsx'
     - 📁 pages/
+      - 📄 CourseDetail.jsx
+        - Imports:
+          - import {useState, useEffect} from "react"
+          - import { Link, useNavigate } from "react-router-dom"
+          - import api from "../api"
+          - import { useNotification } from "../components/Notifications"
+        - Functions:
+          - CourseDetail
       - 📄 CreateCourse.jsx
+        - Imports:
+          - import {useState, useEffect} from "react"
+          - import { Link, useNavigate } from "react-router-dom"
+          - import api from "../api"
+          - import { useNotification } from "../components/Notifications"
+        - Functions:
+          - CourseCreate
+          - handleSubmit
+          - invalid
+          - feedback
       - 📄 Home.jsx
         - Imports:
           - import {useState, useEffect} from "react"

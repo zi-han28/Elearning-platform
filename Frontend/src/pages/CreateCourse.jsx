@@ -14,6 +14,7 @@ function CourseCreate(){
     const [saving, setSaving] = useState(false);
     const [fieldErrors, setFieldErrors] = useState({});
     const {notify} = useNotification()
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!picture) {
@@ -41,7 +42,14 @@ function CourseCreate(){
             navigate(`/courses/${res.data.slug}`);
             notify(`${res.data.title} has been created!`)
         }catch(err){
-            setError("Something went wrong please try again")
+            const data = err.response?.data;
+            if (data && typeof data === "object") {
+                setFieldErrors(data);
+            } else if (err.response?.status === 403) {
+                setError("Only teachers can create courses.");
+            } else {
+                setError("Something went wrong. Please try again.");
+            }
         }finally{
             setSaving(false)
         }
