@@ -10,6 +10,7 @@ import Search from './pages/search'
 import UserProfile from './pages/UserProfile'
 import CreateCourses from './pages/CreateCourse'
 import CourseDetail from './pages/CourseDetail'
+import CreateModule from './pages/CreateModule'
 
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
@@ -53,6 +54,10 @@ function App() {
             {/* Courses routes */}
             <Route path="/courses/create" element={<ProtectedRoute>< CreateCourses /></ProtectedRoute>}/>
             <Route path="/courses/:slug" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>}/>
+
+            {/* Modules routes */}
+            <Route path="/courses/:slug/modules/create" element={<ProtectedRoute><CreateModule /></ProtectedRoute>}/>
+            <Route path="/modules/:id/edit" element={<ProtectedRoute><CreateModule /></ProtectedRoute>}/>
             <Route path="*" element={<NotFound/>}></Route>
           </Route>
         </Routes>

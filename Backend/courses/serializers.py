@@ -103,6 +103,15 @@ class CourseSerializer(serializers.ModelSerializer):
         if not self.instance and Course.objects.filter(slug=slugify(value)).exists():
             raise serializers.ValidationError("A course with this title already exists.")
         return value
+    
+    def validate(self, data):
+        # On create (self.instance is None), the picture must be present.
+        # On update (self.instance set), it's optional.
+        if self.instance is None and not data.get("course_picture"):
+            raise serializers.ValidationError(
+                {"course_picture": "Course picture is required."}
+            )
+        return data
 
 # notification serializers
 class EnrollmentNotificationSerializer(serializers.ModelSerializer):

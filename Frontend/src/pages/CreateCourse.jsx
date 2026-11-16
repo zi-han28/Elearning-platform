@@ -4,12 +4,10 @@ import api from "../api"
 import { useNotification } from "../components/Notifications";
 
 function CourseCreate(){
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [picture, setPicture] = useState(null);
     const [overview, setOverview] = useState("");
     const [preview, setPreview] = useState("");
-    const [image, setImage] = useState(null);
     const [title, setTitle] = useState("")
     const [saving, setSaving] = useState(false);
     const [fieldErrors, setFieldErrors] = useState({});
@@ -29,7 +27,6 @@ function CourseCreate(){
     const handleSubmit = async (e) =>{
         e.preventDefault();
         setSaving(true);
-        setLoading(true);
         setFieldErrors({});
         setError("");
         const fd = new FormData();
@@ -55,7 +52,7 @@ function CourseCreate(){
         }
     }
     
-        // Bootstrap invalid styling + message for one field, like crispy forms does
+    // Bootstrap invalid styling + message for one field, like crispy forms does
     const invalid = (name) => (fieldErrors[name] ? " is-invalid" : "");
     const feedback = (name) =>
         fieldErrors[name] && (
@@ -115,6 +112,7 @@ function CourseCreate(){
                                 accept="image/*"
                                 className={"form-control" + invalid("course_picture")}
                                 onChange={(e) => setPicture(e.target.files[0] || null)}
+                                required
                             />
                             {feedback("course_picture")}
                             {preview && (

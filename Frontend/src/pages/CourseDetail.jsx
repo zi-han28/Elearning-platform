@@ -1,6 +1,8 @@
 import {useState, useEffect} from "react"
 import { Link, useNavigate , useParams} from "react-router-dom";
 import api from "../api"
+import { jwtDecode } from "jwt-decode";
+import { ACCESS_TOKEN } from "../constants";
 
 
 function CourseDetail() {
@@ -8,7 +10,26 @@ function CourseDetail() {
     const [course, setCourse] = useState(null)
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-    
+    const navigate = useNavigate()
+    const token = localStorage.getItem(ACCESS_TOKEN);
+    const currentUserId = token ? jwtDecode(token).user_id : null;
+    const isOwner = currentUserId != null && String(course?.teacher?.id) === String(currentUserId);
+
+    const handleDeleteSubmit = async(e) =>{
+        api.delete(`/api/courses/${slug}/`)
+        navigate("/")
+    }
+
+    const handleModuleDelete = async (module) => {
+        if (!window.confirm(`Delete module "${module.title}"?`)) return;
+        try {
+            await api.delete(`/api/modules/${module.id}/`);
+            setCourse((c) => ({ ...c, modules: c.modules.filter((m) => m.id !== module.id) }));
+        } catch {
+            setError("Could not delete module. Please try again.");
+        }
+    }
+
 
     useEffect(() => {
         let cancelled = false;
@@ -47,7 +68,7 @@ function CourseDetail() {
 
     if (!course) return null;
     return(
-        <div className="container mt-4">
+        <div className="container mt-4" >
             <Link to="/" className="btn btn-link mb-3">&larr; Back to courses</Link>
 
             <div className="card">
@@ -55,14 +76,14 @@ function CourseDetail() {
                     <img
                         src={course.course_picture}
                         alt={course.title}
-                        className="card-img-top"
-                        style={{ maxHeight: 300, objectFit: "cover" }}
+                        className="img-thumbnail justify-content-center" 
+                        style={{ maxHeight: 300, width:'18rem', }}
                     />
                 )}
                 <div className="card-body">
-                    <div className="d-flex justify-content-between align-items-start">
-                        <h2 className="card-title mb-1">{course.title}</h2>
-                        <span className="badge bg-secondary">{course.slug}</span>
+                    <div className="justify-content-between align-items-start">
+                        <h2 className="card-title">{course.title}</h2>
+                        <span className="badge bg-secondary mb-3">{course.slug}</span>
                     </div>
 
                     <p className="text-muted mb-3">
@@ -79,14 +100,58 @@ function CourseDetail() {
                                 Enrolled
                             </span>
                         )}
-                        <Link
-                            to={`/courses/${course.slug}/modules/`}
-                            className="btn btn-primary"
-                        >
-                            View modules
-                        </Link>
+                        {isOwner && (
+                            <button className="btn btn-outline-danger w-100" onClick={handleDeleteSubmit}>
+                                Delete Course
+                            </button>
+                        )}
                     </div>
                 </div>
+            </div>
+
+            <div className="card mt-4">
+                <div className="card-header d-flex justify-content-between align-items-center">
+                    <h4 className="mb-0">Modules</h4>
+                    {isOwner && (
+                        <Link to={`/courses/${course.slug}/modules/create`} className="btn btn-primary btn-sm">
+                            + Add a new module
+                        </Link>
+                    )}
+                </div>
+                <ul className="list-group list-group-flush">
+                    {course.modules.length === 0 && (
+                        <li className="list-group-item text-muted">No modules yet.</li>
+                    )}
+                    {course.modules.map((module) => (
+                        <li key={module.id} className="list-group-item">
+                            <div className="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 className="mb-1">{module.order}. {module.title}</h5>
+                                    {module.description && (
+                                        <p className="mb-1" style={{ whiteSpace: "pre-wrap" }}>
+                                            {module.description}
+                                        </p>
+                                    )}
+                                    {module.file && (
+                                        <a href={module.file} target="_blank" rel="noreferrer" className="small">
+                                            View {module.file_type || "file"}
+                                        </a>
+                                    )}
+                                </div>
+                                {isOwner && (
+                                    <div className="d-flex gap-2">
+                                        <Link to={`/modules/${module.id}/edit`} className="btn btn-outline-secondary btn-sm">
+                                            Edit
+                                        </Link>
+                                        <button className="btn btn-outline-danger btn-sm" onClick={() => handleModuleDelete(module)}>
+                                            Delete
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     )

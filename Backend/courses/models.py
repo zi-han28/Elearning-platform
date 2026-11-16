@@ -11,12 +11,11 @@ class Course(models.Model):
     overview = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     students = models.ManyToManyField(CustomUser, related_name='courses_joined', blank=True)
-    course_picture = models.ImageField(default='course_pics/default.jpg', upload_to='course_pics/', null=True, blank=True)
+    course_picture = models.ImageField(upload_to='course_pics/', null=True, blank=True)
 
     def get_course_picture_url(self):
         if self.course_picture and hasattr(self.course_picture, 'url'):
             return self.course_picture.url
-        return '/media/course_pics/default.jpg'
     
     class Meta:
         ordering = ['-created']
