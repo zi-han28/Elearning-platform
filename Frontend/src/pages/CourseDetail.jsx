@@ -9,6 +9,7 @@ function CourseDetail() {
     const { slug } = useParams();
     const [course, setCourse] = useState(null)
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
     const [error, setError] = useState("");
     const navigate = useNavigate()
     const token = localStorage.getItem(ACCESS_TOKEN);
@@ -16,8 +17,14 @@ function CourseDetail() {
     const isOwner = currentUserId != null && String(course?.teacher?.id) === String(currentUserId);
 
     const handleDeleteSubmit = async(e) =>{
-        api.delete(`/api/courses/${slug}/`)
-        navigate("/")
+        if (!window.confirm(`Delete "${course.title}"?`)) return;
+        try{
+            api.delete(`/api/courses/${slug}/`)
+            navigate("/")
+        }catch{
+            setError("Could not Delete Course. Please try again")
+        }
+        
     }
 
     const handleModuleDelete = async (module) => {
@@ -29,7 +36,6 @@ function CourseDetail() {
             setError("Could not delete module. Please try again.");
         }
     }
-
 
     useEffect(() => {
         let cancelled = false;
@@ -54,6 +60,8 @@ function CourseDetail() {
 
         return () => { cancelled = true; };
     }, [slug]);
+
+
 
     if (loading) return <div className="container mt-4">Loading...</div>;
 
@@ -95,15 +103,23 @@ function CourseDetail() {
                     </p>
 
                     <div className="d-flex gap-2">
+                        <Link to={`/courses/${course.slug}/chat`} className="btn btn-outline-info w-100">
+                            Course Discussion
+                        </Link>
                         {course.enrolled && (
                             <span className="badge bg-success align-self-center">
                                 Enrolled
                             </span>
                         )}
                         {isOwner && (
-                            <button className="btn btn-outline-danger w-100" onClick={handleDeleteSubmit}>
-                                Delete Course
-                            </button>
+                            <div className="d-flex gap-2">
+                                <Link to={`/courses/${course.slug}/edit`} className="btn btn-outline-secondary w-100">
+                                    Edit Course
+                                </Link>
+                                <button className="btn btn-outline-danger w-100" onClick={handleDeleteSubmit}>
+                                    Delete Course
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>

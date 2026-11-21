@@ -1,19 +1,25 @@
 import {useState, useEffect} from "react"
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../api"
 import { useNotification } from "../components/Notifications";
 
 function CourseCreate(){
+    const { slug } = useParams();
+    const isEdit = Boolean(slug);
     const [error, setError] = useState("");
     const [picture, setPicture] = useState(null);
+    const [currentPicture, setCurrentPicture] = useState("");
     const [overview, setOverview] = useState("");
     const [preview, setPreview] = useState("");
     const [title, setTitle] = useState("")
+    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [fieldErrors, setFieldErrors] = useState({});
     const {notify} = useNotification()
     const navigate = useNavigate();
 
+
+    // for preview pic effect
     useEffect(() => {
         if (!picture) {
             setPreview("");
@@ -23,6 +29,34 @@ function CourseCreate(){
         setPreview(url);
         return () => URL.revokeObjectURL(url);
     }, [picture]);
+
+    // edit course effect
+    useEffect(() => {
+        let cancelled = false;
+        setLoading(true);
+        setError("");
+        if (!isEdit) {
+            setLoading(false);
+            return;
+        }   
+        
+        api.get(`/api/courses/${slug}/`).then((res) => {
+                if (cancelled) return;
+                const m = res.data;
+                setCurrentPicture(res.data.course_picture || "");
+                setTitle(m.title);
+                setOverview(m.overview);
+            }).catch((err) => {
+            if (cancelled) return;
+            setError(err.response?.status === 404
+                ? (isEdit ? "Module not found." : "Course not found.")
+                : "Could not load data. Please try again.");
+        }).finally(() => {
+            if (!cancelled) setLoading(false);
+        });
+
+        return () => { cancelled = true; };
+    }, [ slug, isEdit]);
     
     const handleSubmit = async (e) =>{
         e.preventDefault();
@@ -35,7 +69,9 @@ function CourseCreate(){
         if (picture) fd.append("course_picture", picture); 
 
         try{
-            const res = await api.post("/api/courses/create/", fd);
+            const res = isEdit
+                ? await api.patch(`/api/courses/${slug}/update/`, fd)
+                : await api.post("/api/courses/create/", fd);
             navigate(`/courses/${res.data.slug}`);
             notify(`${res.data.title} has been created!`)
         }catch(err){
@@ -128,7 +164,7 @@ function CourseCreate(){
                         <button type="submit" className="btn btn-primary mt-3" disabled={saving}>
                             {saving ? "Creating..." : "Create"}
                         </button>
-                        <Link to="/courses" className="btn btn-secondary mt-3 ms-2">
+                        <Link to="/" className="btn btn-secondary mt-3 ms-2">
                             Cancel
                         </Link>
                     </form>

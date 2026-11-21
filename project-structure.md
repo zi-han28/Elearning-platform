@@ -361,6 +361,12 @@ python-dotenv
           - import django.db.models
         - Classes:
           - Migration
+      - 📄 0003_alter_course_course_picture.py
+        - Imports:
+          - import django.db.migrations
+          - import django.db.models
+        - Classes:
+          - Migration
       - 📄 __init__.py
     - 📄 models.py
       - Imports:
@@ -423,6 +429,7 @@ python-dotenv
         - create
         - update
         - validate_title
+        - validate
     - 📄 tasks.py
     - 📄 tests.py
       - Imports:
@@ -555,6 +562,7 @@ python-dotenv
         - get_course
         - get_success_url
   - 📄 db.sqlite3
+  - 📄 dump.rdb
   - 📄 manage.py
     - Imports:
       - import os
@@ -563,7 +571,10 @@ python-dotenv
       - main
   - 📁 media/
     - 📁 course_pics/
+      - 📄 images.png
+      - 📄 images_bmNaFyn.png
     - 📁 module_files/
+      - 📄 Academic_Transcript.pdf
     - 📁 profile_pics/
       - 📄 cat-pfp-tie-cat--tie-cat.webp
       - 📄 default.jpg
@@ -778,16 +789,18 @@ python-dotenv
       - Imports:
         - import { useState } from 'react'
         - import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-        - import Login from './pages/login'
+        - import Login from './pages/Login'
         - import Logout from './pages/Logout'
         - import Register from './pages/register'
-        - import Home from './pages/home'
+        - import Home from './pages/Home'
         - import NotFound from './pages/NotFound'
         - import Profile from './pages/Profile'
         - import Search from './pages/search'
         - import UserProfile from './pages/UserProfile'
         - import CreateCourses from './pages/CreateCourse'
         - import CourseDetail from './pages/CourseDetail'
+        - import CreateModule from './pages/CreateModule'
+        - import CourseDiscussion from './pages/CourseDiscussion'
         - import ProtectedRoute from './components/ProtectedRoute'
         - import Layout from './components/Layout'
         - import { ProfileProvider } from './components/ProfileContext'
@@ -865,15 +878,28 @@ python-dotenv
       - 📄 CourseDetail.jsx
         - Imports:
           - import {useState, useEffect} from "react"
-          - import { Link, useNavigate } from "react-router-dom"
+          - import { Link, useNavigate , useParams} from "react-router-dom"
           - import api from "../api"
-          - import { useNotification } from "../components/Notifications"
+          - import { jwtDecode } from "jwt-decode"
+          - import { ACCESS_TOKEN } from "../constants"
         - Functions:
           - CourseDetail
+          - handleModuleDelete
+      - 📄 CourseDiscussion.jsx
+        - Imports:
+          - import { useState, useEffect, useRef } from "react"
+          - import { Link, useParams } from "react-router-dom"
+          - import { jwtDecode } from "jwt-decode"
+          - import api from "../api"
+          - import { ACCESS_TOKEN } from "../constants"
+        - Functions:
+          - CourseDiscussion
+          - handleSend
+          - formatTime
       - 📄 CreateCourse.jsx
         - Imports:
           - import {useState, useEffect} from "react"
-          - import { Link, useNavigate } from "react-router-dom"
+          - import { Link, useNavigate, useParams } from "react-router-dom"
           - import api from "../api"
           - import { useNotification } from "../components/Notifications"
         - Functions:
@@ -881,9 +907,21 @@ python-dotenv
           - handleSubmit
           - invalid
           - feedback
+      - 📄 CreateModule.jsx
+        - Imports:
+          - import {useState, useEffect} from "react"
+          - import { Link, useNavigate, useParams } from "react-router-dom"
+          - import api from "../api"
+          - import { useNotification } from "../components/Notifications"
+        - Functions:
+          - CreateModule
+          - handleSubmit
+          - invalid
+          - feedback
       - 📄 Home.jsx
         - Imports:
           - import {useState, useEffect} from "react"
+          - import { Link } from "react-router-dom"
           - import api from "../api"
         - Functions:
           - Home
